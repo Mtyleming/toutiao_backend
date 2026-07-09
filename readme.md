@@ -67,6 +67,10 @@ toutiao_backend/
 └── .gitignore        # Git 忽略规则
 ```
 
+## GitHub 仓库
+
+项目地址：https://github.com/Mtyleming/toutiao_backend
+
 ## Git 与 GitHub 使用
 
 ### 提交代码
