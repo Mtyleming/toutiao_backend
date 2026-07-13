@@ -18,7 +18,7 @@ AsyncSessionLocal = async_sessionmaker(
     expire_on_commit=False  # 提交后不使对象属性过期，保持数据可访问
 )
 
-# 依赖项，用于获取数据库会话
+# 依赖项：一个请求共用一个事务，由这里统一提交或回滚
 async def get_db():
     async with AsyncSessionLocal() as session:
         try:
@@ -27,5 +27,3 @@ async def get_db():
         except Exception:
             await session.rollback()  # 发生异常时回滚事务
             raise  # 重新抛出异常以便上层处理
-        finally:
-            await session.close()  # 关闭会话，释放资源

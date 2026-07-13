@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import news
+from routers import news, user
+from utils.exception_handlers import register_exception_handlers
 
 app = FastAPI()
 
+register_exception_handlers(app)
 
 app.add_middleware(CORSMiddleware,
     allow_origins=["*"],
@@ -16,3 +18,4 @@ app.add_middleware(CORSMiddleware,
 async def root():
     return {"message": "Hello World"}
 app.include_router(news.router)
+app.include_router(user.router)
