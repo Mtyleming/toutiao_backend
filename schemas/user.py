@@ -30,3 +30,14 @@ class UserAuthResponse(BaseModel):
         populate_by_name=True,
         from_attributes = True
     )
+
+
+class UserUpdateParam(UserInfoBase):
+    phone: Optional[str] = Field(None, max_length=20, description="手机号")
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
+class passwordParam(BaseModel):
+    oldPassword: str = Field(None, max_length=50, description="旧密码")
+    newPassword: str = Field(None, max_length=50, description="新密码")
