@@ -4,11 +4,12 @@ from models.news import Category, News
 from sqlalchemy import select, func
 
 
-async def get_categories(db: AsyncSession,page:int = 0, limit: int = 100):
+async def get_categories(db: AsyncSession, page: int = 0, limit: int = 100):
     result = await db.execute(select(Category).offset(page).limit(limit))
     return result.scalars().all()
 
-async def get_news_list(db:AsyncSession,page:int = 1,page_size:int = 10,category_id:int = None):
+
+async def get_news_list(db: AsyncSession, page: int = 1, page_size: int = 10, category_id: int = None):
     offset = (page - 1) * page_size
     query = select(News)
 
@@ -21,23 +22,27 @@ async def get_news_list(db:AsyncSession,page:int = 1,page_size:int = 10,category
     res = await db.execute(query)
     return res.scalars().all()
 
-async def get_news_count(db:AsyncSession,category_id:int = None):
+
+async def get_news_count(db: AsyncSession, category_id: int = None):
     query = select(func.count(News.id))
     if category_id is not None:
         query = query.where(News.category_id == category_id)
     res = await db.execute(query)
     return res.scalar_one()
 
-async def get_news_detail(db:AsyncSession,new_id:int):
+
+async def get_news_detail(db: AsyncSession, new_id: int):
     query = select(News).where(News.id == new_id)
     res = await db.execute(query)
     return res.scalars().one_or_none()
 
-async def add_news_view(news:News, db:AsyncSession):
+
+async def add_news_view(news: News, db: AsyncSession):
     news.views += 1
     await db.commit()
 
-async def get_related_news(db:AsyncSession,news_id:int,category_id:int,limit:int):
+
+async def get_related_news(db: AsyncSession, news_id: int, category_id: int, limit: int):
     query = select(News).where(
         News.category_id == category_id,
         News.id != news_id
