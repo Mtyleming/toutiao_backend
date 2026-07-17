@@ -73,6 +73,27 @@ python -m pip install -r requirements.txt
 python -m uvicorn main:app --reload
 ```
 
+### 缓存设置失败：`unknown command 'HELLO'`
+
+**原因**：本机 Redis 版本过旧（例如 2.6.8），而新版 `redis-py` 默认使用 RESP3 协议，连接时会发送 `HELLO` 命令；旧 Redis 不认识该命令。另外旧版也不支持 `SET key value EX 秒数`，会导致设置带过期时间的缓存失败。
+
+**已做兼容处理**（`config/cache_config.py`）：
+
+- 连接时使用 `protocol=2`，避免发送 `HELLO`
+- 带过期时间时使用 `SETEX`，兼容 Redis 2.6.x
+
+**建议**：有条件时升级 Redis 到 6.x / 7.x，功能更全、更稳定。
+
+## 缓存相关说明
+
+| 函数 | 用途 | 参数 | 返回值 |
+|------|------|------|--------|
+| `get_cache(key)` | 读取字符串缓存 | `key`：缓存键 | 字符串或 `None` |
+| `get_list_or_dict(key)` | 读取 JSON 列表/字典缓存 | `key`：缓存键 | 解析后的对象或 `None` |
+| `set_cache(key, value, expire=3600)` | 写入缓存 | `value` 可为字符串/字典/列表；`expire` 为过期秒数 | 成功 `True`，失败 `False` |
+
+新闻分类接口会先读缓存，没有再查数据库并写入缓存。
+
 ## API 接口说明
 
 | 方法 | 路径 | 说明 | 返回值 |

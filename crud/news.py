@@ -1,12 +1,24 @@
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from cache import news_cache
 from models.news import Category, News
 from sqlalchemy import select, func
 
 
 async def get_categories(db: AsyncSession, page: int = 0, limit: int = 100):
+    cache_categories = await news_cache.get_news_cache()
+    if cache_categories:
+        return cache_categories
+
+
     result = await db.execute(select(Category).offset(page).limit(limit))
-    return result.scalars().all()
+    cache_categories = result.scalars().all()
+
+    if cache_categories:
+        value = jsonable_encoder(cache_categories)
+        await news_cache.set_news_cache(value)
+    return cache_categories
 
 
 async def get_news_list(db: AsyncSession, page: int = 1, page_size: int = 10, category_id: int = None):

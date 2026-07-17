@@ -17,3 +17,4 @@ sqlalchemy
 aiomysql
 passlib
 argon2-cffi
+booktype
