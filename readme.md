@@ -176,6 +176,23 @@ git commit -m "你的提交说明"
 git push
 ```
 
+### 推送到 GitHub 失败（Connection was reset）
+
+**原因**：国内网络直连 GitHub 常被重置；本仓库已配置走本地代理 `http://127.0.0.1:7897`。
+
+**处理**：
+
+1. 先打开代理软件（确认本机 `7897` 端口在监听）
+2. 再执行 `git push`
+3. 若提示登录：用 GitHub 账号，或用 Personal Access Token 作为密码
+
+如需改代理端口，在项目目录执行：
+
+```bash
+git config --local http.proxy http://127.0.0.1:你的端口
+git config --local https.proxy http://127.0.0.1:你的端口
+```
+
 ### 拉取最新代码
 
 ```bash
